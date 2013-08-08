@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B9BB1A2E-8770-4B4F-8F16-C4D18FA2719F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>CodeInjection</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5D75F000-8EFD-4DF4-8CB6-520E4883E3D1</key>
+		<string>https://github.com/lombax85/FLCodeInjector.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CodeInjection.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5D75F000-8EFD-4DF4-8CB6-520E4883E3D1</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/lombax85/FLCodeInjector.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5D75F000-8EFD-4DF4-8CB6-520E4883E3D1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5D75F000-8EFD-4DF4-8CB6-520E4883E3D1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CodeInjection</string>
+		</dict>
+	</array>
+</dict>
+</plist>
