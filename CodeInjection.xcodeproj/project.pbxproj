@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8600FA417B3F59200778B09 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = E8600FA317B3F59200778B09 /* LICENSE */; };
+		E8A586DC17B3F444002E36C8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E8A586DB17B3F444002E36C8 /* README.md */; };
 		E8FE329E17B2C637007BBC8D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE329D17B2C637007BBC8D /* Foundation.framework */; };
 		E8FE32A017B2C637007BBC8D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE329F17B2C637007BBC8D /* CoreGraphics.framework */; };
 		E8FE32A217B2C637007BBC8D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE32A117B2C637007BBC8D /* UIKit.framework */; };
@@ -35,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E8600FA317B3F59200778B09 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		E8A586DB17B3F444002E36C8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		E8FE329A17B2C637007BBC8D /* CodeInjection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeInjection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FE329D17B2C637007BBC8D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E8FE329F17B2C637007BBC8D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -116,6 +120,7 @@
 		E8FE32A317B2C637007BBC8D /* CodeInjection */ = {
 			isa = PBXGroup;
 			children = (
+				E8A586DB17B3F444002E36C8 /* README.md */,
 				E8FE32D217B2C648007BBC8D /* FLCodeInjector.h */,
 				E8FE32D317B2C648007BBC8D /* FLCodeInjector.m */,
 				E8FE32AC17B2C637007BBC8D /* AppDelegate.h */,
@@ -126,6 +131,7 @@
 				E8FE32B517B2C637007BBC8D /* Images.xcassets */,
 				E8FE32A417B2C637007BBC8D /* Supporting Files */,
 				E8FE32D517B2EEE9007BBC8D /* Invocation */,
+				E8600FA317B3F59200778B09 /* LICENSE */,
 			);
 			path = CodeInjection;
 			sourceTree = "<group>";
@@ -237,7 +243,9 @@
 			files = (
 				E8FE32B617B2C637007BBC8D /* Images.xcassets in Resources */,
 				E8FE32A817B2C637007BBC8D /* InfoPlist.strings in Resources */,
+				E8A586DC17B3F444002E36C8 /* README.md in Resources */,
 				E8FE32B117B2C637007BBC8D /* Main.storyboard in Resources */,
+				E8600FA417B3F59200778B09 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +393,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CodeInjection/CodeInjection-Prefix.pch";
 				INFOPLIST_FILE = "CodeInjection/CodeInjection-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -398,6 +407,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CodeInjection/CodeInjection-Prefix.pch";
 				INFOPLIST_FILE = "CodeInjection/CodeInjection-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -462,6 +472,7 @@
 				E8FE32CE17B2C637007BBC8D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E8FE32CF17B2C637007BBC8D /* Build configuration list for PBXNativeTarget "CodeInjectionTests" */ = {
 			isa = XCConfigurationList;
@@ -470,6 +481,7 @@
 				E8FE32D117B2C637007BBC8D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
