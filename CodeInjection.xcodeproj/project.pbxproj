@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E862AC1A17B3F859002EED16 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = E862AC1817B3F859002EED16 /* LICENSE */; };
 		E862AC1B17B3F859002EED16 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E862AC1917B3F859002EED16 /* README.md */; };
+		E862AC1D17B3F8B9002EED16 /* LICENSE.TXT in Resources */ = {isa = PBXBuildFile; fileRef = E862AC1C17B3F8B9002EED16 /* LICENSE.TXT */; };
 		E8FE329E17B2C637007BBC8D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE329D17B2C637007BBC8D /* Foundation.framework */; };
 		E8FE32A017B2C637007BBC8D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE329F17B2C637007BBC8D /* CoreGraphics.framework */; };
 		E8FE32A217B2C637007BBC8D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FE32A117B2C637007BBC8D /* UIKit.framework */; };
@@ -37,8 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E862AC1817B3F859002EED16 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
 		E862AC1917B3F859002EED16 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
+		E862AC1C17B3F8B9002EED16 /* LICENSE.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.TXT; sourceTree = SOURCE_ROOT; };
 		E8FE329A17B2C637007BBC8D /* CodeInjection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeInjection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FE329D17B2C637007BBC8D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E8FE329F17B2C637007BBC8D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -120,7 +120,7 @@
 		E8FE32A317B2C637007BBC8D /* CodeInjection */ = {
 			isa = PBXGroup;
 			children = (
-				E862AC1817B3F859002EED16 /* LICENSE */,
+				E862AC1C17B3F8B9002EED16 /* LICENSE.TXT */,
 				E862AC1917B3F859002EED16 /* README.md */,
 				E8FE32D217B2C648007BBC8D /* FLCodeInjector.h */,
 				E8FE32D317B2C648007BBC8D /* FLCodeInjector.m */,
@@ -244,8 +244,8 @@
 				E8FE32B617B2C637007BBC8D /* Images.xcassets in Resources */,
 				E8FE32A817B2C637007BBC8D /* InfoPlist.strings in Resources */,
 				E8FE32B117B2C637007BBC8D /* Main.storyboard in Resources */,
-				E862AC1A17B3F859002EED16 /* LICENSE in Resources */,
 				E862AC1B17B3F859002EED16 /* README.md in Resources */,
+				E862AC1D17B3F8B9002EED16 /* LICENSE.TXT in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
