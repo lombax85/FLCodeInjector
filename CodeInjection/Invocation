@@ -1,0 +1,72 @@
+   
+    // prepare the invocation with variable number of arguments
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    
+    [invocation setTarget:self];
+    [invocation setSelector:cmd];
+    
+    
+    
+    
+    
+    va_list arguments;                     // A place to store the list of arguments
+    va_start ( arguments, cmd );           // Initializing arguments to store all values after num
+    for ( int x = 0; x < numberOfArguments - 2; x++ )        // Loop until all numbers are added
+    {
+        // must do for all types
+        
+        const char *type = [signature getArgumentTypeAtIndex:x+2];
+        
+        if (strcmp(@encode(id), type) == 0) {
+            [invocation setArgument:(__bridge void *)(va_arg(arguments, id)) atIndex:x+2];
+        } else if (strcmp(@encode(void *), type) == 0) {
+            [invocation setArgument:va_arg(arguments, void *) atIndex:x+2];
+        } /*else if (strcmp(@encode(char), type) == 0) {
+            [invocation setArgument:va_arg(arguments, char *) atIndex:x+2];
+        }*/ else if (strcmp(@encode(int), type) == 0) {
+            int anInt = va_arg(arguments, int);
+            [invocation setArgument:&anInt atIndex:x+2];
+        } /*else if (strcmp(@encode(float), type) == 0) {
+            [invocation setArgument:va_arg(arguments, float *) atIndex:x+2];
+        } else if (strcmp(@encode(short), type) == 0) {
+            [invocation setArgument:va_arg(arguments, short *) atIndex:x+2];
+        }*/ else if (strcmp(@encode(long), type) == 0) {
+            long aLong = va_arg(arguments, long);
+            [invocation setArgument:&aLong atIndex:x+2];
+        } else if ((strcmp(@encode(double), type) == 0) || (strcmp(@encode(float), type) == 0)) {
+            double aDouble = va_arg(arguments, double);
+            [invocation setArgument:&aDouble atIndex:x+2];
+        } else {
+            // else int ????
+            int anInt = va_arg(arguments, int);
+            [invocation setArgument:&anInt atIndex:x+2];
+        }
+    }
+    
+    va_end ( arguments );
+    
+    //[invocation retainArguments];
+    
+    
+    FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
+    [injector executeBlockForSelector:cmd];
+    
+    NSString *swizzleSelector = [NSString stringWithFormat:@"SWZ%@", NSStringFromSelector(cmd)];
+    SEL selectorToExecute = NSSelectorFromString(swizzleSelector);
+    [invocation setSelector:selectorToExecute];
+    
+    [invocation invokeWithTarget:self];
+    
+    NSUInteger size = [signature methodReturnLength];
+    
+    if (size != 0)
+    {
+        void *result = malloc(size);
+        [invocation getReturnValue:&result];
+        return result;
+    }
+
+    return NULL;
+    
+    //[self performSelector:NSSelectorFromString(swizzleSelector) withObject:nil];
+    //NSLog(@"CALLED selector: %@ from %@", NSStringFromSelector(cmd), self);
