@@ -19,11 +19,13 @@
 {
     [super viewDidLoad];
     
+    
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
     [injector injectCodeBeforeSelector:@selector(methodWithString:andInteger:andFloat:) code:^{
         NSLog(@"This code should be injected");
     }];
     
+    /*
     FLCodeInjector *anotherInjector = [FLCodeInjector injectorForClass:[UITextField class]];
     [anotherInjector injectCodeBeforeSelector:@selector(inputView) code:^{
         NSLog(@"Before Input View");
@@ -32,6 +34,10 @@
     [anotherInjector injectCodeAfterSelector:@selector(inputView) code:^{
         NSLog(@"This is after");
     }];
+    */
+    
+
+    
 
     
 	// Do any additional setup after loading the view, typically from a nib.
@@ -45,9 +51,28 @@
 
 - (IBAction)anAction:(id)sender {
     
+    
     NSLog(@"%@", [self methodWithString:@"pippo" andInteger:2 andFloat:4.0f]);
-    double aDouble = 10;
-    NSLog(@"%g",aDouble);
+    
+    
+    
+    FLCodeInjector *frameInjector = [FLCodeInjector injectorForClass:[UIView class]];
+    [frameInjector injectCodeBeforeSelector:@selector(frame) code:^{
+        NSLog(@"frame?");
+    }];
+    
+    NSLog(@"View Frame is: %@", NSStringFromCGRect(self.view.frame));
+     
+    /*
+    
+    CGRect* aRect = malloc(sizeof(CGRect));
+    CGRect anotherRect = CGRectMake(10, 10, 10, 10);
+    
+    int pippo = 10;
+    int* pluto = malloc(sizeof(int));
+    */
+    
+    
 }
 
 -(NSString *)methodWithString:(NSString *)firstString andInteger:(int)anInteger andFloat:(float)aFloat

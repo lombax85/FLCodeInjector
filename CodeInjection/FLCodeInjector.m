@@ -220,7 +220,8 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
     // Declare implementation
     IMP implementation;
     
-    
+#pragma mark - First Switch
+#pragma mark - 
     // Set the correct implementation basing on the return type
     if (strcmp(@encode(id), type) == 0) {
         // the argument is an object
@@ -245,6 +246,11 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
     {
         // the argument is float
         implementation = (IMP)floatGenericFunction;
+    }
+    else if (strcmp(@encode(CGRect), type) == 0)
+    {
+        // the argument is CGRect
+        implementation = (IMP)rectGenericFunction;
     }
     else
     {
@@ -303,6 +309,10 @@ float floatGenericFunction(id self, SEL cmd, ...) {
     
     // Find the pointed float value and return it
     float returnedFloat = *(float *)returnValue;
+    
+    // free the memory allocated from previous function (not needed in object)
+    free(returnValue);
+    
     return returnedFloat;
 }
 
@@ -319,6 +329,10 @@ int intGenericFunction(id self, SEL cmd, ...) {
     [injector executeBlockAfterSelector:cmd];
     
     int returnedInt = *(int *)returnValue;
+    
+    // free the memory allocated from previous function (not needed in object)
+    free(returnValue);
+    
     return returnedInt;
 }
 
@@ -335,6 +349,10 @@ double doubleGenericFunction(id self, SEL cmd, ...) {
     [injector executeBlockAfterSelector:cmd];
     
     double returnedDouble = *(double *)returnValue;
+    
+    // free the memory allocated from previous function (not needed in object)
+    free(returnValue);
+    
     return returnedDouble;
 }
 
@@ -351,7 +369,31 @@ long longGenericFunction(id self, SEL cmd, ...) {
     [injector executeBlockAfterSelector:cmd];
     
     double returnedLong = *(long *)returnValue;
+    
+    // free the memory allocated from previous function (not needed in object)
+    free(returnValue);
+    
     return returnedLong;
+}
+
+CGRect rectGenericFunction(id self, SEL cmd, ...) {
+    
+    FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
+    [injector executeBlockBeforeSelector:cmd];
+    
+    va_list arguments;
+    va_start ( arguments, cmd );
+    void * returnValue = getReturnValue(self, cmd, arguments);
+    va_end(arguments);
+    
+    [injector executeBlockAfterSelector:cmd];
+    
+    CGRect returnedRect = *(CGRect *)returnValue;
+    
+    // free the memory allocated from previous function (not needed in object)
+    free(returnValue);
+    
+    return returnedRect;
 }
 
 id objectGenericFunction(id self, SEL cmd, ...) {
@@ -368,6 +410,7 @@ id objectGenericFunction(id self, SEL cmd, ...) {
     
     // Since the returnedValue is a pointer itself, we need only to bridge cast it
     id returnedObject = (__bridge id)returnValue;
+    
     return returnedObject;
 }
 
@@ -376,6 +419,9 @@ id objectGenericFunction(id self, SEL cmd, ...) {
  to the return value (that can be of any type)
  */
 void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
+    
+    if (!self || !NSStringFromSelector(cmd))
+        return nil;
     
     // Copy the variable argument list into another va_list
     // Why? read this: http://julipedia.meroh.net/2011/09/using-vacopy-to-safely-pass-ap.html
@@ -414,6 +460,10 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // The type of the argument at this index
         const char *type = [signature getArgumentTypeAtIndex:idx];
         
+#pragma mark - Second Switch
+#pragma mark -
+        
+        
         // An if-elseif to find the correct argument type
         // Extendend comments only in the first two cases
         if (strcmp(@encode(id), type) == 0) {
@@ -444,6 +494,12 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
             double aDouble = va_arg(arguments, double);
             [invocation setArgument:&aDouble atIndex:idx];
         }
+        else if ((strcmp(@encode(CGRect), type) == 0))
+        {
+            // the argument is CGRect
+            CGRect aRect = va_arg(arguments, CGRect);
+            [invocation setArgument:&aRect atIndex:idx];
+        }
         else
         {
             // the argument is char or others
@@ -464,6 +520,8 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
     // ... and prepare a generic void pointer to store the pointer to the final value
     void *finalValue = nil;
     
+#pragma mark - Third Switch
+#pragma mark -
     
     // Again, we must use different code depending on the return type
     if (strcmp(@encode(id), returnType) == 0) {
@@ -486,11 +544,22 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // the return value is an int
         if (sizeOfReturnValue != 0)
         {
-            int anInt;
-            [invocation getReturnValue:&anInt];
+            // If I pass a pointer to a stack allocated variable to the upper function (up-stack)
+            // I have undefined behavior, since the stack allocated variable becomes garbage when the
+            // function ends. Instead, I use malloc to put the variable on the heap.
+            // I need to free it in the upper function
+            // Moreover, another thinkg: I pass anInt (and not &anInt) to getReturnValue because
+            // when working with primitive types on the heap, the syntax is different:
+            // *anInt = 10; -> put 10 in the heap address pointed by anInt
+            // so, because getReturnValue wants the memory address where put the int, I simply pass anInt.
+            // With objects the story is different. When I do for example: NSString *string; I don't have yet
+            // the memory address (string points to nil), when I do [[NSString alloc] init] I change the value of string
+            // pointer. Then, to fill that memory address, I have to pass &string.
+            int *anInt = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:anInt];
             
             // in this case, we are returnig a generic pointer that points to an int
-            finalValue = &anInt;
+            finalValue = anInt;
         }
 
     }
@@ -499,9 +568,9 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // the return value is a long
         if (sizeOfReturnValue != 0)
         {
-            long aLong;
-            [invocation getReturnValue:&aLong];
-            finalValue = &aLong;
+            long *aLong = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:aLong];
+            finalValue = aLong;
         }
     }
     else if (strcmp(@encode(float), returnType) == 0)
@@ -509,9 +578,9 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // the return value is float
         if (sizeOfReturnValue != 0)
         {
-            float aFloat;
-            [invocation getReturnValue:&aFloat];
-            finalValue = &aFloat;
+            float *aFloat = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:aFloat];
+            finalValue = aFloat;
         }
     }
     else if (strcmp(@encode(double), returnType) == 0)
@@ -519,9 +588,19 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // the return value is double
         if (sizeOfReturnValue != 0)
         {
-            double aDouble;
-            [invocation getReturnValue:&aDouble];
-            finalValue = &aDouble;
+            double *aDouble = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:aDouble];
+            finalValue = aDouble;
+        }
+    }
+    else if (strcmp(@encode(CGRect), returnType) == 0)
+    {
+        // the return value is double
+        if (sizeOfReturnValue != 0)
+        {
+            CGRect *aRect = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:aRect];
+            finalValue = aRect;
         }
     }
     else
@@ -529,9 +608,9 @@ void * getReturnValue(id self, SEL cmd, va_list argumentsToCopy) {
         // the return value is something different
         if (sizeOfReturnValue != 0)
         {
-            int anInt;
-            [invocation getReturnValue:&anInt];
-            finalValue = &anInt;
+            int *anInt = malloc(sizeOfReturnValue);
+            [invocation getReturnValue:anInt];
+            finalValue = anInt;
         }
     }
     
