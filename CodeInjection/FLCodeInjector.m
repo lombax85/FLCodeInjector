@@ -118,6 +118,8 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
 
 - (void)injectCodeBefore:(BOOL)before selector:(SEL)method code:(void (^)())completionBlock
 {
+    void (^copiedBlock)() = [completionBlock copy];
+    
     // Initialize local variable
     BOOL shouldSwizzle = YES;
     
@@ -132,9 +134,9 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
     
     // Add the code block to the before or after dictionary
     if (before)
-        [self.dictionaryOfBlocksBefore setObject:completionBlock forKey:selectorString];
+        [self.dictionaryOfBlocksBefore setObject:copiedBlock forKey:selectorString];
     else
-        [self.dictionaryOfBlocksAfter setObject:completionBlock forKey:selectorString];
+        [self.dictionaryOfBlocksAfter setObject:copiedBlock forKey:selectorString];
 
     
     
