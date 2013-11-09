@@ -18,7 +18,7 @@
 /**
  The main class associated with the instance
  */
-@property (strong, nonatomic) Class mainClass;
+@property (strong, nonatomic, readwrite) Class mainClass;
 
 /**
  A dictionary of blocks to be executed BEFORE the original method call
@@ -254,6 +254,11 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
         // the argument is CGRect
         implementation = (IMP)rectGenericFunction;
     }
+    else if (strcmp(@encode(void), type) == 0)
+    {
+        // the argument is CGRect
+        implementation = (IMP)voidGenericFunction;
+    }
     else
     {
         // the argument is char or others
@@ -336,6 +341,19 @@ int intGenericFunction(id self, SEL cmd, ...) {
     free(returnValue);
     
     return returnedInt;
+}
+
+void voidGenericFunction(id self, SEL cmd, ...) {
+    
+    FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
+    [injector executeBlockBeforeSelector:cmd];
+    
+    va_list arguments;
+    va_start ( arguments, cmd );
+    
+    va_end(arguments);
+    
+    [injector executeBlockAfterSelector:cmd];
 }
 
 double doubleGenericFunction(id self, SEL cmd, ...) {

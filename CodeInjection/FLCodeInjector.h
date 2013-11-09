@@ -42,6 +42,11 @@
 + (FLCodeInjector *) injectorForClass:(Class)thisClass;
 
 /**
+ The main class associated with the instance
+ */
+@property (strong, nonatomic, readonly) Class mainClass;
+
+/**
  This method inject and execute the code block before forwarding the call to the original selector
  */
 - (void)injectCodeBeforeSelector:(SEL)method code:(void (^)())completionBlock;
