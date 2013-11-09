@@ -350,7 +350,7 @@ void voidGenericFunction(id self, SEL cmd, ...) {
     
     va_list arguments;
     va_start ( arguments, cmd );
-    
+    getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
     [injector executeBlockAfterSelector:cmd sender:self];
