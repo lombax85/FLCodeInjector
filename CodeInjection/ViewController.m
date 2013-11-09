@@ -18,11 +18,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    
+
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector injectCodeBeforeSelector:@selector(methodWithString:andInteger:andFloat:) code:^{
-        NSLog(@"This code should be injected");
+    
+    [injector injectCodeBeforeSelector:@selector(methodWithString:andInteger:andFloat:) code:^(id sender) {
+        NSLog(@"This code should be injected in: %@", sender);
     }];
     
     /*
@@ -36,9 +36,6 @@
     }];
     */
     
-
-    
-
     
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -54,7 +51,7 @@
     
     NSLog(@"%@", [self methodWithString:@"pippo" andInteger:2 andFloat:4.0f]);
     
-    
+    /*
     
     FLCodeInjector *frameInjector = [FLCodeInjector injectorForClass:[UIView class]];
     [frameInjector injectCodeBeforeSelector:@selector(frame) code:^{
@@ -62,7 +59,7 @@
     }];
     
     NSLog(@"View Frame is: %@", NSStringFromCGRect(self.view.frame));
-     
+     */
     /*
     
     CGRect* aRect = malloc(sizeof(CGRect));

@@ -33,8 +33,8 @@
 /**
  Expose these two methods to permit the functions to execute the blocks
  */
-- (void)executeBlockBeforeSelector:(SEL)method;
-- (void)executeBlockAfterSelector:(SEL)method;
+- (void)executeBlockBeforeSelector:(SEL)method sender:(id)sender;
+- (void)executeBlockAfterSelector:(SEL)method sender:(id)sender;
 
 @end
 
@@ -106,17 +106,17 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
 
 #pragma mark - Public methods
 
-- (void)injectCodeBeforeSelector:(SEL)method code:(void (^)())completionBlock
+- (void)injectCodeBeforeSelector:(SEL)method code:(void (^)(id sender))completionBlock
 {
     [self injectCodeBefore:YES selector:method code:completionBlock];
 }
 
-- (void)injectCodeAfterSelector:(SEL)method code:(void (^)())completionBlock
+- (void)injectCodeAfterSelector:(SEL)method code:(void (^)(id sender))completionBlock
 {
     [self injectCodeBefore:NO selector:method code:completionBlock];
 }
 
-- (void)injectCodeBefore:(BOOL)before selector:(SEL)method code:(void (^)())completionBlock
+- (void)injectCodeBefore:(BOOL)before selector:(SEL)method code:(void (^)(id sender))completionBlock
 {
     void (^copiedBlock)() = [completionBlock copy];
     
@@ -164,23 +164,23 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
 /**
  Executes the code block checking if exists in the "before array"
  */
-- (void)executeBlockBeforeSelector:(SEL)method
+- (void)executeBlockBeforeSelector:(SEL)method sender:(id)sender
 {
     void(^aBlock)() = [self.dictionaryOfBlocksBefore objectForKey:NSStringFromSelector(method)];
     
-    if (aBlock)
-        aBlock();
+    if (aBlock && sender)
+        aBlock(sender);
 }
 
 /**
  Executes the code block checking if exists in the "before array"
  */
-- (void)executeBlockAfterSelector:(SEL)method
+- (void)executeBlockAfterSelector:(SEL)method sender:(id)sender
 {
     void(^aBlock)() = [self.dictionaryOfBlocksAfter objectForKey:NSStringFromSelector(method)];
     
-    if (aBlock)
-        aBlock();
+    if (aBlock && sender)
+        aBlock(sender);
 }
 
 #pragma mark - Private methods
@@ -298,7 +298,7 @@ float floatGenericFunction(id self, SEL cmd, ...) {
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
     
     // This call executes the code block to inject
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
 
     // Pass self, cmd and the arg list to the main function: getReturnValue
@@ -312,7 +312,7 @@ float floatGenericFunction(id self, SEL cmd, ...) {
     va_end(arguments);
     
     // Execute the after block
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     // Find the pointed float value and return it
     float returnedFloat = *(float *)returnValue;
@@ -326,14 +326,14 @@ float floatGenericFunction(id self, SEL cmd, ...) {
 int intGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     void * returnValue = getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     int returnedInt = *(int *)returnValue;
     
@@ -346,27 +346,27 @@ int intGenericFunction(id self, SEL cmd, ...) {
 void voidGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
 }
 
 double doubleGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     void * returnValue = getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     double returnedDouble = *(double *)returnValue;
     
@@ -379,14 +379,14 @@ double doubleGenericFunction(id self, SEL cmd, ...) {
 long longGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     void * returnValue = getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     double returnedLong = *(long *)returnValue;
     
@@ -399,14 +399,14 @@ long longGenericFunction(id self, SEL cmd, ...) {
 CGRect rectGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     void * returnValue = getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     CGRect returnedRect = *(CGRect *)returnValue;
     
@@ -419,14 +419,14 @@ CGRect rectGenericFunction(id self, SEL cmd, ...) {
 id objectGenericFunction(id self, SEL cmd, ...) {
     
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
-    [injector executeBlockBeforeSelector:cmd];
+    [injector executeBlockBeforeSelector:cmd sender:self];
     
     va_list arguments;
     va_start ( arguments, cmd );
     void * returnValue = getReturnValue(self, cmd, arguments);
     va_end(arguments);
     
-    [injector executeBlockAfterSelector:cmd];
+    [injector executeBlockAfterSelector:cmd sender:self];
     
     // Since the returnedValue is a pointer itself, we need only to bridge cast it
     id returnedObject = (__bridge id)returnValue;

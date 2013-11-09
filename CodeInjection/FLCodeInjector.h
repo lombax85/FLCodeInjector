@@ -48,14 +48,16 @@
 
 /**
  This method inject and execute the code block before forwarding the call to the original selector
+ Sender is the object on which the method is called
  */
-- (void)injectCodeBeforeSelector:(SEL)method code:(void (^)())completionBlock;
+- (void)injectCodeBeforeSelector:(SEL)method code:(void (^)(id sender))completionBlock;
 
 /**
  This method inject and execute the code block after forwarding the call to the original selector
- However, the code block is executed (obviously) before returning the result up to the stack
+ However, the code block is executed (obviously) before returning the result up to the stack.
+ Sender is the object on which the method is called
  */
-- (void)injectCodeAfterSelector:(SEL)method code:(void (^)())completionBlock;
+- (void)injectCodeAfterSelector:(SEL)method code:(void (^)(id sender))completionBlock;
 
 
 
