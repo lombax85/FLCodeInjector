@@ -1,10 +1,10 @@
 This Class, created by Fabio Lombardo ( http://www.lombax.it ) acts as a simple
 code injector. It can be used to execute blocks of code BEFORE or AFTER a
-specific method of an Objective-C object.
+specific method of an Objective-C object instance or class.
 The main use is for debugging purposes
 It uses method swizzling and supports the following features:
 
-- Swizzling methods with return type of kind: int, float, long, double, id and void
+- Swizzling instance and class methods with return type of kind: int, float, long, double, id and void
 - Swizzling methods with variable number of arguments, tested with the following type: int, float, long, double, id
 - TODO: structs!!!
 
@@ -17,6 +17,12 @@ This example implementation executes the NSLog each time inputView is called (ev
     FLCodeInjector *anotherInjector = [FLCodeInjector injectorForClass:[UITextField class]];
     [anotherInjector injectCodeBeforeSelector:@selector(inputView) code:^(id sender){
         NSLog(@"Before Input View. Method executed by %@", sender);
+    }];
+    
+This example implementation executes the NSLog before the CLASS selector. Use the 'injectCodeBeforeClassSelector'    
+    FLCodeInjector *classInjector = [FLCodeInjector injectorForClass:[UIColor class]];
+    [classInjector injectCodeBeforeClassSelector:@selector(redColor) code:^(id sender) {
+        NSLog(@"Calling redColor on UIColor");
     }];
     
 NOTE: take care when swizzling event handling method like touchesBegan:withEvent on UIView.
