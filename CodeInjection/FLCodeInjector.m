@@ -108,15 +108,25 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
 
 - (void)injectCodeBeforeSelector:(SEL)method code:(void (^)(id sender))completionBlock
 {
-    [self injectCodeBefore:YES selector:method code:completionBlock];
+    [self injectCodeBefore:YES selector:method isClass:NO code:completionBlock];
 }
 
 - (void)injectCodeAfterSelector:(SEL)method code:(void (^)(id sender))completionBlock
 {
-    [self injectCodeBefore:NO selector:method code:completionBlock];
+    [self injectCodeBefore:NO selector:method isClass:NO code:completionBlock];
 }
 
-- (void)injectCodeBefore:(BOOL)before selector:(SEL)method code:(void (^)(id sender))completionBlock
+- (void)injectCodeBeforeClassSelector:(SEL)method code:(void (^)(id sender))completionBlock
+{
+    [self injectCodeBefore:YES selector:method isClass:YES code:completionBlock];
+}
+
+- (void)injectCodeAfterClassSelector:(SEL)method code:(void (^)(id sender))completionBlock
+{
+    [self injectCodeBefore:NO selector:method isClass:YES code:completionBlock];
+}
+
+- (void)injectCodeBefore:(BOOL)before selector:(SEL)method isClass:(BOOL)isClass code:(void (^)(id sender))completionBlock
 {
     void (^copiedBlock)() = [completionBlock copy];
     
@@ -138,11 +148,16 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
     else
         [self.dictionaryOfBlocksAfter setObject:copiedBlock forKey:selectorString];
 
-    
+    Method origMethod = nil;
     
     // Now we add the new swizzled selector to the original class
     // Fist: obtain the Method from Class+Selector
-    Method origMethod = class_getInstanceMethod(self.mainClass, method);
+    if (isClass)
+    {
+         origMethod = class_getClassMethod(self.mainClass, method);
+    } else {
+        origMethod = class_getInstanceMethod(self.mainClass, method);
+    }
     
     // Get the encoding of the method. The encoding is a char like this: v@:@@@ --> this means:
     // v -> void return type
@@ -153,12 +168,25 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
     // https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
     const char *encoding = method_getTypeEncoding(origMethod);
     
-    // Add the selector
-    [self addSelector:NSSelectorFromString(swizzleSelectorString) toClass:self.mainClass originalSelector:method methodTypeEncoding:encoding];
-    
-    // Swizzle only if needed
-    if (shouldSwizzle)
-        SwizzleMe(self.mainClass, method, NSSelectorFromString(swizzleSelectorString));
+    if (method && encoding && self.mainClass)
+    {
+        // obtain the swizzle selector (SWZselector) from the string
+        SEL swizzleSelector = NSSelectorFromString(swizzleSelectorString);
+        
+        // Add the selector
+        [self addSelector:swizzleSelector toClass:self.mainClass classMethod:isClass originalSelector:method methodTypeEncoding:encoding];
+        
+        // Swizzle only if needed
+        if (shouldSwizzle)
+        {
+            if (isClass)
+            {
+                SwizzleMeClass(self.mainClass, method, swizzleSelector);
+            } else {
+                SwizzleMe(self.mainClass, method, swizzleSelector);
+            }
+        }
+    }
 }
 
 /**
@@ -186,7 +214,7 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
 #pragma mark - Private methods
 
 
--(void)addSelector:(SEL)selector toClass:(Class)aClass originalSelector:(SEL)originalSel methodTypeEncoding:(const char *)encoding
+-(void)addSelector:(SEL)selector toClass:(Class)aClass classMethod:(BOOL)classMethod originalSelector:(SEL)originalSel methodTypeEncoding:(const char *)encoding
 {
     /**
      Discussion: it's not possible to create a function with a dynamic return type.
@@ -265,10 +293,19 @@ static NSMutableDictionary *dictionaryOfClasses = nil;
         implementation = (IMP)intGenericFunction;
     }
     
+    
+    // if we are adding a class method, we must add it to the meta-class (and not to the Class object "aClass", which is an objective C object instance that points to a real isa class. To do it, use object_getClass
+    // more informations about meta-class here: http://www.cocoawithlove.com/2010/01/what-is-meta-class-in-objective-c.html
+    if (classMethod)
+    {
+        aClass = object_getClass((id)aClass);
+    }
+    
     // add the method to the class
     class_addMethod(aClass,
                     selector,
                     implementation, encoding);
+
 }
 
 /**
@@ -278,6 +315,24 @@ void SwizzleMe(Class c, SEL orig, SEL new)
 {
     Method origMethod = class_getInstanceMethod(c, orig);
     Method newMethod = class_getInstanceMethod(c, new);
+    if(class_addMethod(c, orig, method_getImplementation(newMethod), method_getTypeEncoding(newMethod)))
+        class_replaceMethod(c, new, method_getImplementation(origMethod), method_getTypeEncoding(origMethod));
+    else
+        method_exchangeImplementations(origMethod, newMethod);
+}
+
+/**
+ This function simply swizzle the method implementations - to use only with classes
+ */
+void SwizzleMeClass(Class c, SEL orig, SEL new)
+{
+    // if we are adding a class method, we must add it to the meta-class (and not to the Class object "aClass", which is an objective C object instance that points to a real isa class. To do it, use object_getClass
+    // more informations about meta-class here: http://www.cocoawithlove.com/2010/01/what-is-meta-class-in-objective-c.html
+    c = object_getClass((id)c);
+    
+    Method origMethod = class_getClassMethod(c, orig);
+    Method newMethod = class_getClassMethod(c, new);
+    
     if(class_addMethod(c, orig, method_getImplementation(newMethod), method_getTypeEncoding(newMethod)))
         class_replaceMethod(c, new, method_getImplementation(origMethod), method_getTypeEncoding(origMethod));
     else

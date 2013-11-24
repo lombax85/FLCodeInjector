@@ -21,9 +21,17 @@
 
     FLCodeInjector *injector = [FLCodeInjector injectorForClass:[self class]];
     
+    
     [injector injectCodeBeforeSelector:@selector(methodWithString:andInteger:andFloat:) code:^(id sender) {
         NSLog(@"This code should be injected in: %@", sender);
     }];
+    
+
+    FLCodeInjector *classInjector = [FLCodeInjector injectorForClass:[UIColor class]];
+    [classInjector injectCodeBeforeClassSelector:@selector(redColor) code:^(id sender) {
+        NSLog(@"Calling redColor on UIColor");
+    }];
+    
     
     /*
     FLCodeInjector *anotherInjector = [FLCodeInjector injectorForClass:[UITextField class]];
@@ -51,6 +59,7 @@
     
     NSLog(@"%@", [self methodWithString:@"pippo" andInteger:2 andFloat:4.0f]);
     
+    self.view.backgroundColor = [UIColor redColor];
     /*
     
     FLCodeInjector *frameInjector = [FLCodeInjector injectorForClass:[UIView class]];

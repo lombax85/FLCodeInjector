@@ -47,17 +47,36 @@
 @property (strong, nonatomic, readonly) Class mainClass;
 
 /**
+ Use this method to inject code before an INSTANCE selector
  This method inject and execute the code block before forwarding the call to the original selector
- Sender is the object on which the method is called
+ Sender is the object instance on which the method is called
  */
 - (void)injectCodeBeforeSelector:(SEL)method code:(void (^)(id sender))completionBlock;
 
 /**
+ Use this method to inject code before a CLASS selector
+ This method inject and execute the code block before forwarding the call to the original selector
+ Sender is the object instance on which the method is called
+ */
+- (void)injectCodeBeforeClassSelector:(SEL)method code:(void (^)(id sender))completionBlock;
+
+/**
+  Use this method to inject code after an INSTANCE selector
  This method inject and execute the code block after forwarding the call to the original selector
  However, the code block is executed (obviously) before returning the result up to the stack.
  Sender is the object on which the method is called
  */
 - (void)injectCodeAfterSelector:(SEL)method code:(void (^)(id sender))completionBlock;
+
+/**
+  Use this method to inject code after a CLASS selector
+ This method inject and execute the code block after forwarding the call to the original selector
+ However, the code block is executed (obviously) before returning the result up to the stack.
+ Sender is the object on which the method is called
+ */
+- (void)injectCodeAfterClassSelector:(SEL)method code:(void (^)(id sender))completionBlock;
+
+
 
 
 
