@@ -19,7 +19,8 @@ This example implementation executes the NSLog each time inputView is called (ev
         NSLog(@"Before Input View. Method executed by %@", sender);
     }];
     
-This example implementation executes the NSLog before the CLASS selector. Use the 'injectCodeBeforeClassSelector'    
+This example implementation executes the NSLog before the CLASS selector. Use the 'injectCodeBeforeClassSelector'
+    
     FLCodeInjector *classInjector = [FLCodeInjector injectorForClass:[UIColor class]];
     [classInjector injectCodeBeforeClassSelector:@selector(redColor) code:^(id sender) {
         NSLog(@"Calling redColor on UIColor");
